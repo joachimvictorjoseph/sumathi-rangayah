@@ -32,6 +32,9 @@ export function ListenBar({
   const [voices, setVoices] = useState<TTSVoice[]>([]);
   const [voiceId, setVoiceId] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
+  // null = still loading; true/false = whether a voice for this story's
+  // language is installed on the device (Web Speech relies on OS voices).
+  const [hasLanguageVoice, setHasLanguageVoice] = useState<boolean | null>(null);
 
   // Keep the latest voice selection available to callbacks without re-binding.
   const voiceIdRef = useRef(voiceId);
@@ -47,6 +50,8 @@ export function ListenBar({
     engine.getVoices().then((all) => {
       if (cancelled) return;
       setVoices(sortByLanguage(all, language));
+      const prefix = language === "ta" ? "ta" : "en";
+      setHasLanguageVoice(all.some((v) => v.lang.toLowerCase().startsWith(prefix)));
     });
 
     // Stop playback if the user navigates away.
@@ -104,7 +109,29 @@ export function ListenBar({
 
   const isPlaying = status === "playing";
 
+  // Web Speech can only speak languages the device has a voice for. When the
+  // story's language voice is missing (commonly Tamil on Windows/desktop),
+  // tell the reader clearly instead of playing silence.
+  const voiceMissing = hasLanguageVoice === false;
+
   return (
+    <div className="space-y-2">
+      {voiceMissing && (
+        <div className="flex items-start gap-2 rounded-lg border border-plum/20 bg-white/70 px-4 py-3 text-xs leading-5 text-muted">
+          <SpeakerIcon className="mt-0.5 h-4 w-4 flex-shrink-0 text-plum" />
+          <span>
+            No{" "}
+            <strong className="text-ink">
+              {language === "ta" ? "Tamil" : "English"}
+            </strong>{" "}
+            voice is installed on this device, so the browser can&apos;t read this
+            story aloud yet. Install a{" "}
+            {language === "ta" ? "Tamil" : "English"} text-to-speech voice in your
+            system settings — or high-quality AI voices are coming in a later update.
+          </span>
+        </div>
+      )}
+
     <div className="flex flex-col gap-3 rounded-lg border border-plum/15 bg-lavender/40 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
       <div className="flex items-center gap-3">
         <button
@@ -166,6 +193,7 @@ export function ListenBar({
           {error}
         </p>
       )}
+    </div>
     </div>
   );
 }
