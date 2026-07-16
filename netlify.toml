@@ -1,0 +1,9 @@
+# Netlify deployment config.
+# The official @netlify/plugin-nextjs (auto-installed by Netlify) handles the
+# App Router, image optimization and SSG output. Vercel needs no config file.
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"

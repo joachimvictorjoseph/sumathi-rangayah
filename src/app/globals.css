@@ -1,0 +1,71 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-playfair: "Playfair Display", Georgia, serif;
+  --font-inter: "Inter", system-ui, sans-serif;
+  --font-noto-tamil: "Noto Serif Tamil", serif;
+}
+
+@layer base {
+  body {
+    @apply bg-cream text-ink font-sans antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-serif;
+  }
+
+  /* Tamil text — set lang="ta" on the element to get correct font + spacing. */
+  [lang="ta"] {
+    font-family: var(--font-noto-tamil);
+    line-height: 1.95;
+    word-break: normal;
+  }
+}
+
+@layer components {
+  /* Reusable primary button in the plum accent. */
+  .btn-plum {
+    @apply inline-flex items-center justify-center gap-2 rounded-md bg-plum px-6 py-3
+           text-sm font-medium text-cream transition-colors hover:bg-plum-dark
+           focus:outline-none focus-visible:ring-2 focus-visible:ring-plum-light;
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 rounded-md border border-plum/30
+           px-4 py-2 text-sm font-medium text-plum transition-colors hover:bg-plum hover:text-cream;
+  }
+
+  /* Uppercase category tag used on cards and the reading page. */
+  .category-tag {
+    @apply text-[11px] font-semibold uppercase tracking-[0.14em] text-plum;
+  }
+
+  .container-page {
+    @apply mx-auto w-full max-w-content px-4 sm:px-6 lg:px-8;
+  }
+
+  /* Long-form reading typography for story bodies. */
+  .prose-story p {
+    @apply mb-6 text-[1.075rem] leading-8 text-ink/90;
+  }
+  .prose-story h2 {
+    @apply mb-4 mt-10 text-2xl text-ink;
+  }
+  .prose-story [lang="ta"] {
+    @apply text-[1.15rem];
+  }
+}
+
+/* Respect users who prefer reduced motion. */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}
